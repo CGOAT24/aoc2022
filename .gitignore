@@ -1,0 +1,6 @@
+*/.idea
+*/.DS_STORE
+.DS_STORE
+*/node_modules
+.gitignore.swp
+
