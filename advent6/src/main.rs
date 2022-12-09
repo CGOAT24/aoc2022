@@ -26,8 +26,6 @@ fn find_unique(text: String, length: u32) -> u32 {
 }
 
 fn main() {
-    let start: DateTime<Local> = Local::now();
-
     let mut length: u32 = 14;
     let args: Vec<String> = env::args().collect();
     if args.len() >= 2 {
@@ -37,7 +35,4 @@ fn main() {
     let file: String = read_file("input.txt").unwrap();
     let pos: u32 = find_unique(file, length);
     println!("{}", pos);
-    let end: DateTime<Local> = Local::now();
-    let time: Duration = end - start;
-    println!("Time elapsed: {}ms", time.num_milliseconds());
 }
