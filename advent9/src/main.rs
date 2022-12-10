@@ -43,8 +43,7 @@ impl Position {
     }
 
     fn adjust_to_head(&mut self, head: Position) {
-        let dist = self.distance_with(head.clone());
-        if dist > f32::sqrt(2.0) {
+        if self.distance_with(head.clone()) > f32::sqrt(2.0) {
             self.x += 1 * (head.x - self.x).signum();
             self.y += 1 * (head.y - self.y).signum();
         }
@@ -60,7 +59,6 @@ fn read_file(filename: &str) -> Result<Vec<Movement>, Box<dyn Error>> {
         let line = line?;
 
         let res: Vec<&str> = line.split(" ").collect();
-
         let length = res[1].parse::<i32>().unwrap();
         let direction = match res[0] {
             "U" => Direction::UP,
