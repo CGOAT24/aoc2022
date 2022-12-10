@@ -20,13 +20,28 @@ struct Movement {
     length: i32
 }
 
-#[derive(Eq, Hash, PartialEq, Clone, Default, Copy)]
+#[derive(Eq, Hash, PartialEq, Clone, Copy)]
 struct Position {
     x: i32,
     y: i32
 }
 
+impl Default for Position {
+    fn default() -> Self {
+        Position { x: 0, y: 0 }
+    }
+}
+
 impl Position {
+    fn update(&mut self, dir: Direction) {
+        match dir {
+            Direction::UP => self.y += 1,
+            Direction::DOWN => self.y -= 1,
+            Direction::LEFT => self.x -= 1,
+            Direction::RIGHT => self.x += 1
+        }
+    }
+
     fn distance_with(&self, pos: Position) -> f32 {
         let x1 = self.x;
         let x2 = pos.x;
@@ -39,7 +54,7 @@ impl Position {
         let mut y: f32 = (y2 - y1).abs() as f32;
         y *= y;
 
-        return f32::sqrt(x + y);
+        f32::sqrt(x + y)
     }
 
     fn adjust_to_head(&mut self, head: Position) {
@@ -70,25 +85,16 @@ fn read_file(filename: &str) -> Result<Vec<Movement>, Box<dyn Error>> {
 
         vec.push(Movement { direction, length });
     }
-    return Ok(vec);
+    Ok(vec)
 }
 
-fn get_positions<const SIZE: usize>(vec: Vec<Movement>) -> HashSet<Position> {
-    let mut knots: [Position ; SIZE] = [Default::default() ; SIZE];
+fn get_positions<const NUM_KNOTS: usize>(vec: Vec<Movement>) -> HashSet<Position> {
+    let mut knots: [Position ; NUM_KNOTS] = [Default::default() ; NUM_KNOTS];
     let mut positions = HashSet::new();
-
-    for i in 0..knots.len() {
-        knots[i] = Position { x: 0, y: 0 };
-    }
 
     for mov in vec.iter() {
         for _ in 0..mov.length {
-            match mov.direction {
-                Direction::UP => knots[0].y += 1,
-                Direction::DOWN => knots[0].y -= 1,
-                Direction::LEFT => knots[0].x -= 1,
-                Direction::RIGHT => knots[0].x += 1
-            }
+            knots[0].update(mov.direction.clone());
 
             for i in 1..knots.len() {
                 knots[i].adjust_to_head(knots[i - 1].clone());
@@ -96,7 +102,7 @@ fn get_positions<const SIZE: usize>(vec: Vec<Movement>) -> HashSet<Position> {
             }
         }
     }
-    return positions;
+    positions
 }
 
 fn main() {
